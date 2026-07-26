@@ -47,18 +47,18 @@
 
     const text = section.textContent || '';
 
-    // Single-row types (usually mb-1)
-    if (/mentioned you in a comment/i.test(text)) return 'mention';
-    if (/friend request/i.test(text)) return 'friend';
-    if (/(new discussion|posted in|joined your group|in your group)/i.test(text)) return 'group';
-    if (/started following you/i.test(text)) return 'follow';
-
     // Loves: language-independent heart icon in the section body (not inside a
     // comment widget — excluded above), or "love(s)/loved" wording as fallback.
     const hasHeart = [...section.querySelectorAll('svg path')].some((p) =>
       (p.getAttribute('d') || '').startsWith(HEART_PATH_PREFIX)
     );
     if (hasHeart || /\blove[ds]?\b/i.test(text)) return 'like';
+
+    // Single-row types (usually mb-1)
+    if (/mentioned you in a/i.test(text)) return 'mention';
+    if (/friend request/i.test(text)) return 'friend';
+    if (/(new discussion|posted in|joined your group|in your group)/i.test(text)) return 'group';
+    if (/started following you/i.test(text)) return 'follow';
 
     return 'other';
   }
