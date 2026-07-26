@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Notification Filter for FetLife</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>Notification filter</h1>
+    <label class="switch" title="Enable or disable all filtering">
+      <input type="checkbox" id="enabled" />
+      <span class="track" aria-hidden="true"></span>
+      <span class="switch-label">Filter on</span>
+    </label>
+  </header>
+
+  <main>
+    <p class="hint">Hide these notification types:</p>
+    <ul id="types">
+      <li><label><input type="checkbox" data-type="like" /> Loves</label></li>
+      <li><label><input type="checkbox" data-type="comment" /> Comments on your content</label></li>
+      <li><label><input type="checkbox" data-type="mention" /> Mentions</label></li>
+      <li><label><input type="checkbox" data-type="follow" /> New followers</label></li>
+      <li><label><input type="checkbox" data-type="friend" /> Friend requests</label></li>
+      <li><label><input type="checkbox" data-type="group" /> Groups &amp; discussions</label></li>
+      <li><label><input type="checkbox" data-type="other" /> Everything else</label></li>
+    </ul>
+  </main>
+
+  <footer>
+    Unofficial. Not affiliated with BitLove or FetLife.
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
