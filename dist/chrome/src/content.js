@@ -3,10 +3,15 @@
  * Content script: classifies notification <section> elements and applies
  * user-configured visibility rules.
  *
- * Classification is content-based, NOT class-based: FetLife's mb-3.5 / mb-1
- * Tailwind classes distinguish "detail body" vs "single row" notifications,
- * not likes vs comments. Comments on own content and follows also render
- * as mb-3.5.
+ * Classification is content-based, NOT class-based, and TWO-LEVEL:
+ * FetLife bundles loves and comments on the same content into ONE section
+ * (header = the content, body = a loves row AND comment blocks as separate
+ * children of the same .divide-y container). Such sections are typed
+ * "mixed" and their parts are tagged individually with data-fnf-part, so
+ * CSS can hide a love row while keeping the comments visible.
+ * Pure sections keep the section-level type as before.
+ * 
+ * Anna is cool af :)
  */
 (() => {
   'use strict';
@@ -34,45 +39,73 @@
   /** Heart/love SVG path prefix used by FetLife for loves (language-independent). */
   const HEART_PATH_PREFIX = 'M4.634 1';
 
-  /**
-   * Classify a notification <section>.
-   *
-   * Order matters, twice over:
-   * 1. Comment detection must precede like detection, because comment
-   *    bodies contain love icons/counts of their own.
-   * 2. The icon-based like check must precede the text patterns, because
-   *    like sections quote the liked content's title, which may itself
-   *    contain filter words ("friend request", "new discussion", ...).
-   *    The text fallback for loves, however, must come LAST: quoted user
-   *    content in mentions frequently contains the word "love", and the
-   *    specific patterns must win over the fuzzy one.
-   */
-  function classify(section) {
-    // Embedded comment widget (comments on own pictures/posts/writings)
-    if (section.querySelector('[data-comment-id], .comment__copy, [data-comment-anchor]')) {
-      return 'comment';
-    }
+  /** Markers of an embedded comment widget. */
+  const COMMENT_SELECTOR = '[data-comment-id], .comment__copy, [data-comment-anchor]';
 
-    // Loves via heart icon: language-independent and immune to whatever
-    // text the loved content's title contains.
-    const hasHeart = [...section.querySelectorAll('svg path')].some((p) =>
+  function containsHeart(el) {
+    return [...el.querySelectorAll('svg path')].some((p) =>
       (p.getAttribute('d') || '').startsWith(HEART_PATH_PREFIX)
     );
-    if (hasHeart) return 'like';
+  }
+
+  /**
+   * Whole-section classification (fallback for sections without separable
+   * parts). Order important:
+   * 1. Comment detection must precede like detection cause comment
+   *    bodies contain love icons/counts of their own.
+   * 2. The icon-based like check must precede the text patterns because
+   *    like sections quote the liked content's title, which may itself
+   *    contain filter words ("friend request", "new discussion", ...).
+   *    The text fallback for loves tho, must come last: quoted user
+   *    content in mentions frequently contains the word "love".
+   */
+  function classifyWhole(section) {
+    if (section.querySelector(COMMENT_SELECTOR)) return 'comment';
+    if (containsHeart(section)) return 'like';
 
     const text = section.textContent || '';
 
-    // Specific single-row types (usually mb-1)
     if (/mentioned you/i.test(text)) return 'mention';
     if (/(follow request|started following you)/i.test(text)) return 'follow';
     if (/(friend request|relationship request)/i.test(text)) return 'friend';
     if (/(new discussion|posted in|joined your group|in your group)/i.test(text)) return 'group';
 
-    // Fuzzy text fallback for loves whose icon was not found (e.g. after a
-    // partial redesign). Deliberately last — see ordering note above.
+    // Fuzzy (like your cats Anna!) text fallback for loves whose icon was not found.
     if (/\blove[ds]?\b/i.test(text)) return 'like';
 
     return 'other';
+  }
+
+  /**
+   * NIGHT SESSIONS FOR THE WIN! jeez i hope that fixed it "properly"...
+   * Classify one section, tagging separable parts if present.
+   * Parts live as direct children of the section's .divide-y container:
+   * a child containing a comment widget is a comment part, a child
+   * containing the love-heart icon (and no comment widget) is a like part.
+   * Untagged children (unknown content) are never hidden.
+   */
+  function classifySection(section) {
+    const container = section.querySelector('.divide-y');
+    const partTypes = new Set();
+
+    if (container) {
+      for (const child of container.children) {
+        let part = null;
+        if (child.matches(COMMENT_SELECTOR) || child.querySelector(COMMENT_SELECTOR)) {
+          part = 'comment';
+        } else if (containsHeart(child)) {
+          part = 'like';
+        }
+        if (part) {
+          child.dataset.fnfPart = part;
+          partTypes.add(part);
+        }
+      }
+    }
+
+    if (partTypes.size > 1) return 'mixed';
+    if (partTypes.size === 1) return partTypes.values().next().value;
+    return classifyWhole(section);
   }
 
   /** Tag every untagged notification section under #main-content. */
@@ -82,13 +115,13 @@
     );
     let tagged = 0;
     for (const section of sections) {
-      section.dataset.fnfType = classify(section);
+      section.dataset.fnfType = classifySection(section);
       tagged++;
     }
     return tagged;
   }
 
-  /** Reflect settings as attributes on <html>; CSS does the actual hiding. */
+  /** Reflect settings as attributes on <html>. CSS does the hiding. */
   function applySettings() {
     const html = document.documentElement;
     html.toggleAttribute('data-fnf-enabled', !!settings.enabled);
@@ -97,7 +130,7 @@
     }
   }
 
-  /** Ask the page-world script to refresh Waypoint trigger points (debounced there). */
+  /** Ask the page-world script to refresh Waypoint trigger points. Bounce bounce */
   function requestWaypointRefresh() {
     window.dispatchEvent(new CustomEvent('fnf:refresh-waypoints'));
   }
@@ -148,7 +181,7 @@
 
   // --- DOM lifecycle ------------------------------------------------------
 
-  // Endless scrolling appends new sections; tag them as they arrive.
+  // Endless scrolling appends new sections; tag 'em as they arrive.
   let observerScheduled = false;
   const observer = new MutationObserver(() => {
     if (observerScheduled) return;
@@ -164,7 +197,7 @@
     observer.observe(target, { childList: true, subtree: true });
   }
 
-  // Turbo (Hotwire) navigates without full page loads.
+  // Turbo (Hotwire) Navigation without full page loads.
   document.addEventListener('turbo:load', run);
   document.addEventListener('turbo:render', run);
 
