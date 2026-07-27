@@ -1,0 +1,14 @@
+/* Notification Filter for FetLife (unofficial)
+ * Hiding is driven by attributes the content script sets on <html> and on
+ * each notification <section>. CSS rules apply automatically to sections
+ * added later by endless scrolling — no re-run needed for styling. */
+
+html[data-fnf-enabled][data-fnf-hide-like]    section[data-fnf-type="like"],
+html[data-fnf-enabled][data-fnf-hide-comment] section[data-fnf-type="comment"],
+html[data-fnf-enabled][data-fnf-hide-mention] section[data-fnf-type="mention"],
+html[data-fnf-enabled][data-fnf-hide-follow]  section[data-fnf-type="follow"],
+html[data-fnf-enabled][data-fnf-hide-friend]  section[data-fnf-type="friend"],
+html[data-fnf-enabled][data-fnf-hide-group]   section[data-fnf-type="group"],
+html[data-fnf-enabled][data-fnf-hide-other]   section[data-fnf-type="other"] {
+  display: none !important;
+}
