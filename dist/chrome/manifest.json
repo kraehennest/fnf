@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Fet Notification Filter",
-  "version": "v0.1.0",
+  "version": "0.1.0",
   "description": "Filter your FetLife notifications by type: hide loves, comments, mentions, follows and more. Each type can be toggled individually.",
   "permissions": ["storage"],
   "icons": {

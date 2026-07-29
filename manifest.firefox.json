@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Notification Filter for FetLife (unofficial)",
-  "version": "0.1.0",
-  "description": "Filter FetLife notifications by type: hide loves, keep comments, mentions and more. Unofficial; not affiliated with BitLove.",
+  "name": "Fet Notification Filter",
+  "version": "v0.1.0",
+  "description": "Filter your FetLife notifications by type: hide loves, comments, mentions, follows and more. Each type can be toggled individually.",
   "browser_specific_settings": {
     "gecko": {
       "id": "notification-filter-fetlife@kraehennest.github.io",
