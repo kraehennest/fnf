@@ -1,4 +1,4 @@
-# Notification Filter for FetLife (unofficial)
+# Fet Notification Filter
 
 Browser extension that filters the FetLife notifications page by notification
 type — e.g. hide loves, keep comments and mentions.
