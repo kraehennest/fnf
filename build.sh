@@ -9,8 +9,11 @@ mkdir -p dist
 for target in chrome firefox; do
   mkdir -p "build/$target"
   cp -r src "build/$target/src"
+  cp -r icons "build/$target/icons"
   cp "manifest.$target.json" "build/$target/manifest.json"
-  (cd "build/$target" && zip -qr "../../dist/$target.zip" .)
+  # Strip macOS metadata files before zipping
+  find "build/$target" -name '.DS_Store' -delete
+  (cd "build/$target" && zip -qr "../../dist/$target.zip" . -x "*.DS_Store" -x "__MACOSX/*")
 done
 
 rm -rf build
