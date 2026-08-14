@@ -9,9 +9,14 @@
 
 * { box-sizing: border-box; }
 
+html {
+  width: 300px;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
-  width: 260px;
+  width: 300px;
   background: var(--bg);
   color: var(--text);
   font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -107,9 +112,22 @@ footer {
   color: var(--muted);
 }
 
+input[type="radio"] { accent-color: var(--accent); }
+
 footer a {
   color: var(--muted);
   text-decoration: underline;
 }
 
 footer a:hover { color: var(--text); }
+
+h2 {
+  margin: 12px 0 2px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+main h2:first-child { margin-top: 2px; }

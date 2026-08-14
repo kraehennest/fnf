@@ -1,0 +1,26 @@
+/* Fet Features — notifications module
+ * Hiding driven by attributes on <html> plus data-ff-type / data-ff-part
+ * tags set by the module. Applies automatically to sections added by
+ * endless scrolling. */
+
+html[data-ff-enabled][data-ff-hide-like]    section[data-ff-type="like"],
+html[data-ff-enabled][data-ff-hide-comment] section[data-ff-type="comment"],
+html[data-ff-enabled][data-ff-hide-mention] section[data-ff-type="mention"],
+html[data-ff-enabled][data-ff-hide-follow]  section[data-ff-type="follow"],
+html[data-ff-enabled][data-ff-hide-friend]  section[data-ff-type="friend"],
+html[data-ff-enabled][data-ff-hide-group]   section[data-ff-type="group"],
+html[data-ff-enabled][data-ff-hide-other]   section[data-ff-type="other"] {
+  display: none !important;
+}
+
+/* Parts inside mixed sections (loves + comments bundled per content item) */
+html[data-ff-enabled][data-ff-hide-like]    [data-ff-part="like"],
+html[data-ff-enabled][data-ff-hide-comment] [data-ff-part="comment"] {
+  display: none !important;
+}
+
+/* Hide mixed sections entirely when all their part types are hidden */
+html[data-ff-enabled][data-ff-hide-like][data-ff-hide-comment]
+  section[data-ff-type="mixed"] {
+  display: none !important;
+}

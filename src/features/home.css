@@ -1,0 +1,30 @@
+/* Fet Features — home module
+ * Display modes for loved-pictures thumbnail grids. "large" reduces the
+ * column count; thumbnails are 160px CDN sources, so cells beyond ~250px
+ * get visibly soft. */
+
+html[data-ff-enabled][data-ff-pics="hidden"] [data-ff-grid="loved-pictures"] {
+  display: none !important;
+}
+
+html[data-ff-enabled][data-ff-pics="large"] [data-ff-grid="loved-pictures"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+@media (min-width: 480px) {
+  html[data-ff-enabled][data-ff-pics="large"] [data-ff-grid="loved-pictures"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 768px) {
+  html[data-ff-enabled][data-ff-pics="large"] [data-ff-grid="loved-pictures"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  html[data-ff-enabled][data-ff-pics="large"] [data-ff-grid="loved-pictures"] {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+}

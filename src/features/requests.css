@@ -1,0 +1,16 @@
+/* Fet Features — requests module
+ * Hide message-request rows whose sender's self-identified gender token is
+ * exactly "M". Tagged on the swipeout row root by the module. */
+
+html[data-ff-enabled][data-ff-hide-male-requests] .swipeout[data-ff-req="male"] {
+  display: none !important;
+}
+
+/* Informational line above the request list when rows are hidden */
+#ff-hidden-note {
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #9a938c;
+  border-bottom: 1px solid #2b2b2b;
+}

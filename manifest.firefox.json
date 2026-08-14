@@ -1,49 +1,69 @@
 {
   "manifest_version": 3,
-  "name": "Fet Notification Filter",
-  "version": "v0.1.0",
-  "description": "Filter your FetLife notifications by type: hide loves, comments, mentions, follows and more. Each type can be toggled individually.",
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "notification-filter-fetlife@kraehennest.github.io",
-      "strict_min_version": "140.0",
-      "data_collection_permissions": {
-        "required": ["none"]
-      }
-    },
-    "gecko_android": {
-      "strict_min_version": "142.0"
-    }
-  },
-  "permissions": ["storage"],
+  "name": "Fet Features",
+  "version": "1.0.1",
+  "description": "Customize FetLife: filter notifications by type, adjust loved-picture thumbnails in the home feed, hide unwanted message requests. Unofficial; not affiliated with BitLove.",
+  "permissions": [
+    "storage"
+  ],
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
-    "96": "icons/icon96.png",
-    "128": "icons/icon128.png"
+    "128": "icons/icon128.png",
+    "96": "icons/icon96.png"
   },
   "content_scripts": [
     {
-      "matches": ["https://fetlife.com/*"],
-      "js": ["src/content.js"],
-      "css": ["src/content.css"],
+      "matches": [
+        "https://fetlife.com/*"
+      ],
+      "js": [
+        "src/core.js",
+        "src/features/notifications.js",
+        "src/features/home.js",
+        "src/features/requests.js",
+        "src/boot.js"
+      ],
+      "css": [
+        "src/features/notifications.css",
+        "src/features/home.css",
+        "src/features/requests.css"
+      ],
       "run_at": "document_start"
     },
     {
-      "matches": ["https://fetlife.com/*"],
-      "js": ["src/page.js"],
+      "matches": [
+        "https://fetlife.com/*"
+      ],
+      "js": [
+        "src/page.js"
+      ],
       "world": "MAIN",
       "run_at": "document_end"
     }
   ],
   "action": {
     "default_popup": "src/popup.html",
-    "default_title": "Notification Filter for FetLife",
+    "default_title": "Fet Features",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
       "48": "icons/icon48.png"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "notification-filter-fetlife@kraehennest.github.io",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
     }
   }
 }

@@ -2,29 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Notification Filter for FetLife</title>
+  <title>Fet Features</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
   <header>
-    <h1>Notification Filter</h1>
-    <label class="switch" title="Enable or disable all filtering">
+    <h1>Fet Features</h1>
+    <label class="switch" title="Enable or disable all features">
       <input type="checkbox" id="enabled" />
       <span class="track" aria-hidden="true"></span>
-      <span class="switch-label">Filter on</span>
+      <span class="switch-label">On</span>
     </label>
   </header>
 
   <main>
+    <h2>Notifications</h2>
     <p class="hint">Hide these notification types:</p>
-    <ul id="types">
-      <li><label><input type="checkbox" data-type="like" /> Loves</label></li>
-      <li><label><input type="checkbox" data-type="comment" /> Comments on your content</label></li>
-      <li><label><input type="checkbox" data-type="mention" /> Mentions</label></li>
-      <li><label><input type="checkbox" data-type="follow" /> Follows &amp; follow requests</label></li>
-      <li><label><input type="checkbox" data-type="friend" /> Friend &amp; relationship requests</label></li>
-      <li><label><input type="checkbox" data-type="group" /> Groups &amp; discussions</label></li>
-      <li><label><input type="checkbox" data-type="other" /> Everything else</label></li>
+    <ul>
+      <li><label><input type="checkbox" data-notif="like" /> Loves</label></li>
+      <li><label><input type="checkbox" data-notif="comment" /> Comments on your content</label></li>
+      <li><label><input type="checkbox" data-notif="mention" /> Mentions</label></li>
+      <li><label><input type="checkbox" data-notif="follow" /> Follows &amp; follow requests</label></li>
+      <li><label><input type="checkbox" data-notif="friend" /> Friend &amp; relationship requests</label></li>
+      <li><label><input type="checkbox" data-notif="group" /> Groups &amp; discussions</label></li>
+      <li><label><input type="checkbox" data-notif="other" /> Everything else</label></li>
+    </ul>
+
+    <h2>Home feed</h2>
+    <p class="hint">Loved pictures in the feed:</p>
+    <ul role="radiogroup" aria-label="Loved pictures display">
+      <li><label><input type="radio" name="pictures" value="hidden" /> Hide thumbnails</label></li>
+      <li><label><input type="radio" name="pictures" value="normal" /> Normal size</label></li>
+      <li><label><input type="radio" name="pictures" value="large" /> Bigger thumbnails</label></li>
+    </ul>
+
+    <h2>Message requests</h2>
+    <ul>
+      <li><label><input type="checkbox" id="hideMaleRequests" /> Hide requests from men (M)</label></li>
     </ul>
   </main>
 
