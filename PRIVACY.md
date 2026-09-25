@@ -1,6 +1,6 @@
 # Privacy Policy — Fet Features
 
-Last updated: February 2026
+Last updated: September 2026
 
 ## Summary
 
