@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Fet Features",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Customize FetLife: filter notifications by type, adjust loved-picture thumbnails in the home feed, hide unwanted message requests. Unofficial; not affiliated with BitLove.",
   "permissions": [
     "storage"
@@ -23,12 +23,14 @@
         "src/features/notifications.js",
         "src/features/home.js",
         "src/features/requests.js",
+        "src/features/badges.js",
         "src/boot.js"
       ],
       "css": [
         "src/features/notifications.css",
         "src/features/home.css",
-        "src/features/requests.css"
+        "src/features/requests.css",
+        "src/features/badges.css"
       ],
       "run_at": "document_start"
     },

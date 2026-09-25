@@ -32,6 +32,11 @@ const FF = {
     requests: {
       hideMale: false,
     },
+    badges: {
+      inbox: false,
+      requests: false,
+      notifications: false,
+    },
   },
 
   settings: null,
@@ -58,6 +63,7 @@ const FF = {
       },
       home: { ...d.home, ...(raw.home || {}) },
       requests: { ...d.requests, ...(raw.requests || {}) },
+      badges: { ...d.badges, ...(raw.badges || {}) },
     };
   },
 
@@ -68,6 +74,7 @@ const FF = {
 
   /** Tag current DOM (per matching feature) and reflect settings as attributes. */
   run() {
+    if (!this.settings) return;
     let tagged = 0;
     for (const feature of this.features) {
       if (feature.matches && !feature.matches(location)) continue;
@@ -98,6 +105,12 @@ const FF = {
   },
 
   boot() {
+    // Start with normalized defaults IMMEDIATELY: the observer and Turbo
+    // listeners below can fire before the async storage read resolves, and
+    // run()/applySettings() must never see null settings (that race threw
+    // "Cannot read properties of null (reading 'enabled')" on busy pages).
+    this.settings = this.normalize(null);
+
     this.api.storage.onChanged.addListener((changes, area) => {
       if (area === 'sync' && changes.settings) {
         this.settings = this.normalize(changes.settings.newValue);

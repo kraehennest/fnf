@@ -16,12 +16,14 @@
     },
     home: { pictures: 'normal' },
     requests: { hideMale: false },
+    badges: { inbox: false, requests: false, notifications: false },
   };
 
   const enabledEl = document.getElementById('enabled');
   const notifEls = [...document.querySelectorAll('input[data-notif]')];
   const sizeEls = [...document.querySelectorAll('input[name="pictures"]')];
   const hideMaleEl = document.getElementById('hideMaleRequests');
+  const badgeEls = [...document.querySelectorAll('input[data-badge]')];
 
   let settings = structuredClone(DEFAULTS);
 
@@ -35,6 +37,7 @@
       notifications: { ...d.notifications, ...(raw.notifications || legacy || {}) },
       home: { ...d.home, ...(raw.home || {}) },
       requests: { ...d.requests, ...(raw.requests || {}) },
+      badges: { ...d.badges, ...(raw.badges || {}) },
     };
   }
 
@@ -48,6 +51,9 @@
       el.checked = el.value === settings.home.pictures;
     }
     hideMaleEl.checked = !!settings.requests.hideMale;
+    for (const el of badgeEls) {
+      el.checked = !!settings.badges[el.dataset.badge];
+    }
   }
 
   async function save() {
@@ -73,6 +79,13 @@
         settings.home.pictures = el.value;
         save();
       }
+    });
+  }
+
+  for (const el of badgeEls) {
+    el.addEventListener('change', () => {
+      settings.badges[el.dataset.badge] = el.checked;
+      save();
     });
   }
 

@@ -1,0 +1,16 @@
+/* Fet Features — badges module
+ * Hide the red alert-count badges on the top-nav icons. The badge wrapper
+ * is the <span> child of the nav anchor that contains FetLife's own
+ * Stimulus count target (data-nav--links-target="...Count") — a functional
+ * hook, so this survives styling redesigns. Hiding the wrapper removes
+ * pill and number; the icon itself stays untouched. Requires :has()
+ * (Firefox 121+ / Chrome 105+; the extension's minimums are higher). */
+
+html[data-ff-enabled][data-ff-hide-badge-inbox]
+  a[data-nav--links-target="inbox"] > span:has([data-nav--links-target="inboxCount"]),
+html[data-ff-enabled][data-ff-hide-badge-requests]
+  a[data-nav--links-target="requests"] > span:has([data-nav--links-target="requestsCount"]),
+html[data-ff-enabled][data-ff-hide-badge-notifications]
+  a[data-nav--links-target="notifications"] > span:has([data-nav--links-target="notificationsCount"]) {
+  display: none !important;
+}
