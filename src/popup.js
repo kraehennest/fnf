@@ -17,6 +17,7 @@
     home: { pictures: 'normal' },
     requests: { hideMale: false },
     badges: { inbox: false, requests: false, notifications: false },
+    mute: { enabled: true },
   };
 
   const enabledEl = document.getElementById('enabled');
@@ -24,6 +25,29 @@
   const sizeEls = [...document.querySelectorAll('input[name="pictures"]')];
   const hideMaleEl = document.getElementById('hideMaleRequests');
   const badgeEls = [...document.querySelectorAll('input[data-badge]')];
+  const muteEnabledEl = document.getElementById('muteEnabled');
+  const muteCountEl = document.getElementById('muteCount');
+  const muteExportEl = document.getElementById('muteExport');
+  const muteImportEl = document.getElementById('muteImport');
+  const muteImportFileEl = document.getElementById('muteImportFile');
+  const muteClearEl = document.getElementById('muteClear');
+
+  let muteUsers = {};
+
+  async function loadMutelist() {
+    try {
+      const stored = await API.storage.local.get('mutelist');
+      muteUsers = (stored && stored.mutelist && stored.mutelist.users) || {};
+    } catch (e) {
+      muteUsers = {};
+    }
+    muteCountEl.textContent = String(Object.keys(muteUsers).length);
+  }
+
+  async function saveMutelist() {
+    await API.storage.local.set({ mutelist: { v: 1, users: muteUsers } });
+    muteCountEl.textContent = String(Object.keys(muteUsers).length);
+  }
 
   let settings = structuredClone(DEFAULTS);
 
@@ -38,6 +62,7 @@
       home: { ...d.home, ...(raw.home || {}) },
       requests: { ...d.requests, ...(raw.requests || {}) },
       badges: { ...d.badges, ...(raw.badges || {}) },
+      mute: { ...d.mute, ...(raw.mute || {}) },
     };
   }
 
@@ -54,6 +79,7 @@
     for (const el of badgeEls) {
       el.checked = !!settings.badges[el.dataset.badge];
     }
+    muteEnabledEl.checked = !!(settings.mute && settings.mute.enabled);
   }
 
   async function save() {
@@ -89,6 +115,43 @@
     });
   }
 
+  muteEnabledEl.addEventListener('change', () => {
+    settings.mute = settings.mute || {};
+    settings.mute.enabled = muteEnabledEl.checked;
+    save();
+  });
+
+  muteExportEl.addEventListener('click', () => {
+    const names = Object.keys(muteUsers).sort();
+    const blob = new Blob([names.join('\n') + '\n'], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'fet-features-mutelist.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  muteImportEl.addEventListener('click', () => muteImportFileEl.click());
+
+  muteImportFileEl.addEventListener('change', async () => {
+    const file = muteImportFileEl.files && muteImportFileEl.files[0];
+    if (!file) return;
+    const text = await file.text();
+    for (const line of text.split(/\r?\n/)) {
+      const name = line.trim();
+      if (!/^[A-Za-z0-9][\w-]*$/.test(name)) continue;
+      if (!muteUsers[name]) muteUsers[name] = ['import'];
+    }
+    muteImportFileEl.value = '';
+    await saveMutelist();
+  });
+
+  muteClearEl.addEventListener('click', async () => {
+    if (!confirm('Remove ALL muted people? This cannot be undone (export first if unsure).')) return;
+    muteUsers = {};
+    await saveMutelist();
+  });
+
   hideMaleEl.addEventListener('change', () => {
     settings.requests.hideMale = hideMaleEl.checked;
     save();
@@ -102,5 +165,6 @@
       /* defaults */
     }
     render();
+    loadMutelist();
   })();
 })();

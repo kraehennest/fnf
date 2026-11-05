@@ -1,0 +1,49 @@
+/* Fet Features — mute list module
+ * Hide any tagged row root whose actor (first profile link) is on the
+ * user's mute list. Tagging happens in mutelist.js; the collector bar on
+ * group member pages is styled to sit quietly above the list. */
+
+html[data-ff-enabled][data-ff-mute-enabled] [data-ff-muted] {
+  display: none !important;
+}
+
+#ff-mute-collector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: 0 0 10px;
+  padding: 10px 14px;
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
+  background: #1b1b1b;
+  color: #9a938c;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+#ff-mute-collector button {
+  padding: 4px 10px;
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
+  background: #242424;
+  color: #e7e2dc;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#ff-mute-collector button:hover {
+  border-color: #c8503c;
+}
+
+#ff-mute-collector label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+#ff-mute-collector input[type="checkbox"] {
+  accent-color: #c8503c;
+}

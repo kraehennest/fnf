@@ -37,6 +37,9 @@ const FF = {
       requests: false,
       notifications: false,
     },
+    mute: {
+      enabled: true,
+    },
   },
 
   settings: null,
@@ -64,6 +67,7 @@ const FF = {
       home: { ...d.home, ...(raw.home || {}) },
       requests: { ...d.requests, ...(raw.requests || {}) },
       badges: { ...d.badges, ...(raw.badges || {}) },
+      mute: { ...d.mute, ...(raw.mute || {}) },
     };
   },
 

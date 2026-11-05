@@ -40,7 +40,7 @@
     <p class="hint">Hide the red counters in the top bar:</p>
     <ul>
       <li><label><input type="checkbox" data-badge="inbox" /> Unread messages (Inbox)</label></li>
-      <li><label><input type="checkbox" data-badge="requests" /> Requests</label></li>
+      <li><label><input type="checkbox" data-badge="requests" /> Message requests</label></li>
       <li><label><input type="checkbox" data-badge="notifications" /> Notifications</label></li>
     </ul>
 
@@ -48,6 +48,18 @@
     <ul>
       <li><label><input type="checkbox" id="hideMaleRequests" /> Hide requests from men (M)</label></li>
     </ul>
+
+    <h2>Mute list</h2>
+    <ul>
+      <li><label><input type="checkbox" id="muteEnabled" /> Hide content from muted people</label></li>
+    </ul>
+    <p class="hint"><span id="muteCount">0</span> people muted. Add people from a group's member pages.</p>
+    <div class="mute-actions">
+      <button type="button" id="muteExport">Export</button>
+      <button type="button" id="muteImport">Import</button>
+      <button type="button" id="muteClear">Clear</button>
+      <input type="file" id="muteImportFile" accept=".txt,text/plain" hidden />
+    </div>
   </main>
 
   <footer>

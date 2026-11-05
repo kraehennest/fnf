@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Fet Features",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Customize FetLife: filter notifications, adjust picture thumbnails in the home feed, hide unwanted message requests. Unofficial.",
   "permissions": [
     "storage"
@@ -23,13 +23,15 @@
         "src/features/home.js",
         "src/features/requests.js",
         "src/features/badges.js",
+        "src/features/mutelist.js",
         "src/boot.js"
       ],
       "css": [
         "src/features/notifications.css",
         "src/features/home.css",
         "src/features/requests.css",
-        "src/features/badges.css"
+        "src/features/badges.css",
+        "src/features/mutelist.css"
       ],
       "run_at": "document_start"
     },

@@ -131,3 +131,21 @@ h2 {
 }
 
 main h2:first-child { margin-top: 2px; }
+.mute-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.mute-actions button {
+  flex: 1;
+  padding: 5px 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mute-actions button:hover { border-color: var(--accent); }
