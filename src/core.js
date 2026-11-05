@@ -12,6 +12,18 @@
  */
 'use strict';
 
+/**
+ * Pre-1.3 installs had no mode and always hid muted content; keep that
+ * behavior for them. Fresh installs (no stored mute section) start in
+ * the non-destructive highlight mode.
+ */
+function migrateMute(defaults, raw) {
+  const mute = { ...defaults, ...(raw || {}) };
+  if (raw && raw.mode === undefined) mute.mode = 'hide';
+  if (mute.mode !== 'hide' && mute.mode !== 'highlight') mute.mode = 'highlight';
+  return mute;
+}
+
 const FF = {
   api: typeof browser !== 'undefined' ? browser : chrome,
 
@@ -39,6 +51,7 @@ const FF = {
     },
     mute: {
       enabled: true,
+      mode: 'highlight', // highlight | hide
     },
   },
 
@@ -67,7 +80,7 @@ const FF = {
       home: { ...d.home, ...(raw.home || {}) },
       requests: { ...d.requests, ...(raw.requests || {}) },
       badges: { ...d.badges, ...(raw.badges || {}) },
-      mute: { ...d.mute, ...(raw.mute || {}) },
+      mute: migrateMute(d.mute, raw.mute),
     };
   },
 

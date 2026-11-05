@@ -17,7 +17,7 @@
     home: { pictures: 'normal' },
     requests: { hideMale: false },
     badges: { inbox: false, requests: false, notifications: false },
-    mute: { enabled: true },
+    mute: { enabled: true, mode: 'highlight' },
   };
 
   const enabledEl = document.getElementById('enabled');
@@ -25,7 +25,7 @@
   const sizeEls = [...document.querySelectorAll('input[name="pictures"]')];
   const hideMaleEl = document.getElementById('hideMaleRequests');
   const badgeEls = [...document.querySelectorAll('input[data-badge]')];
-  const muteEnabledEl = document.getElementById('muteEnabled');
+  const muteModeEls = [...document.querySelectorAll('input[name="muteMode"]')];
   const muteCountEl = document.getElementById('muteCount');
   const muteExportEl = document.getElementById('muteExport');
   const muteImportEl = document.getElementById('muteImport');
@@ -62,8 +62,16 @@
       home: { ...d.home, ...(raw.home || {}) },
       requests: { ...d.requests, ...(raw.requests || {}) },
       badges: { ...d.badges, ...(raw.badges || {}) },
-      mute: { ...d.mute, ...(raw.mute || {}) },
+      mute: migrateMute(d.mute, raw.mute),
     };
+  }
+
+  /** Same migration as core.js: pre-1.3 installs keep hide behavior. */
+  function migrateMute(defaults, raw) {
+    const mute = { ...defaults, ...(raw || {}) };
+    if (raw && raw.mode === undefined) mute.mode = 'hide';
+    if (mute.mode !== 'hide' && mute.mode !== 'highlight') mute.mode = 'highlight';
+    return mute;
   }
 
   function render() {
@@ -79,7 +87,14 @@
     for (const el of badgeEls) {
       el.checked = !!settings.badges[el.dataset.badge];
     }
-    muteEnabledEl.checked = !!(settings.mute && settings.mute.enabled);
+    const muteState = !settings.mute.enabled
+      ? 'off'
+      : settings.mute.mode === 'hide'
+        ? 'hide'
+        : 'highlight';
+    for (const el of muteModeEls) {
+      el.checked = el.value === muteState;
+    }
   }
 
   async function save() {
@@ -115,11 +130,19 @@
     });
   }
 
-  muteEnabledEl.addEventListener('change', () => {
-    settings.mute = settings.mute || {};
-    settings.mute.enabled = muteEnabledEl.checked;
-    save();
-  });
+  for (const el of muteModeEls) {
+    el.addEventListener('change', () => {
+      if (!el.checked) return;
+      settings.mute = settings.mute || {};
+      if (el.value === 'off') {
+        settings.mute.enabled = false;
+      } else {
+        settings.mute.enabled = true;
+        settings.mute.mode = el.value;
+      }
+      save();
+    });
+  }
 
   muteExportEl.addEventListener('click', () => {
     const names = Object.keys(muteUsers).sort();

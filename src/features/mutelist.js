@@ -238,9 +238,11 @@
     },
 
     apply(html, settings) {
-      html.toggleAttribute(
-        'data-ff-mute-enabled',
-        !!(settings.mute && settings.mute.enabled)
+      const mute = settings.mute || {};
+      html.toggleAttribute('data-ff-mute-enabled', !!mute.enabled);
+      html.setAttribute(
+        'data-ff-mute-mode',
+        mute.mode === 'hide' ? 'hide' : 'highlight'
       );
     },
   });

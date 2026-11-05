@@ -3,8 +3,16 @@
  * user's mute list. Tagging happens in mutelist.js; the collector bar on
  * group member pages is styled to sit quietly above the list. */
 
-html[data-ff-enabled][data-ff-mute-enabled] [data-ff-muted] {
+html[data-ff-enabled][data-ff-mute-enabled][data-ff-mute-mode="hide"] [data-ff-muted] {
   display: none !important;
+}
+
+/* Highlight mode (default): mark instead of hide — outline avoids layout
+ * shifts on sections, request rows, articles and comment widgets. */
+html[data-ff-enabled][data-ff-mute-enabled][data-ff-mute-mode="highlight"] [data-ff-muted] {
+  outline: 2px solid #c01f1f !important;
+  outline-offset: -2px;
+  background: rgba(192, 31, 31, 0.08) !important;
 }
 
 #ff-mute-collector {
