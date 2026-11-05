@@ -162,7 +162,7 @@
     const text = await file.text();
     for (const line of text.split(/\r?\n/)) {
       const name = line.trim();
-      if (!/^[A-Za-z0-9][\w-]*$/.test(name)) continue;
+      if (!/^[\w-]+$/.test(name)) continue;
       if (!muteUsers[name]) muteUsers[name] = ['import'];
     }
     muteImportFileEl.value = '';

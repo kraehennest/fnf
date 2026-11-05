@@ -31,7 +31,7 @@
     'logout', 'signup', 'about', 'legalese', 'glossary', 'ads',
   ]);
 
-  const PROFILE_RE = /^\/([A-Za-z0-9][\w-]*)$/;
+  const PROFILE_RE = /^\/([\w-]+)$/;
 
   /** username -> array of source tags (e.g. "group:267916", "import", "manual") */
   let users = {};
@@ -51,9 +51,34 @@
     }
     rebuildSet();
     loaded = true;
+    await pinMuteMode();
     clearChecked();
     FF.run();
   }
+
+  /**
+   * Pin the mute mode on first run of 1.3+. Pre-1.3 users who never opened
+   * the popup after 1.2.0 have a list but no stored mute settings;
+   * normalize() would put them into the new highlight default and their
+   * list would seem to stop working. So: no stored mode + non-empty list =
+   * existing user -> hide; no stored mode + empty list = new user ->
+   * highlight. Storing it once keeps later list additions from flipping
+   * a new user into hide.
+   */
+  async function pinMuteMode() {
+    try {
+      const stored = await FF.api.storage.sync.get('settings');
+      const raw = stored && stored.settings;
+      if (raw && raw.mute && raw.mute.mode !== undefined) return;
+      const settings = FF.normalize(raw);
+      settings.mute.mode = userSet.size > 0 ? 'hide' : 'highlight';
+      FF.settings = settings;
+      await FF.api.storage.sync.set({ settings });
+    } catch (e) {
+      /* storage unavailable -> leave defaults */
+    }
+  }
+
 
   async function saveList() {
     await FF.api.storage.local.set({ [STORE_KEY]: { v: 1, users } });
@@ -103,10 +128,15 @@
   function tagMuted() {
     if (!loaded || userSet.size === 0) return 0;
     let tagged = 0;
+    const containers = [];
     for (const root of document.querySelectorAll(ROOT_SELECTORS)) {
+      // Containers (a section holding comment widgets, a comment widget
+      // holding its article) are judged by their inner units, below.
+      if (root.querySelector(ROOT_SELECTORS)) {
+        containers.push(root);
+        continue;
+      }
       if (root.hasAttribute('data-ff-mute-checked')) continue;
-      // Skip roots that contain one of the other root types — judge the
-      // innermost unit, not its container.
       root.setAttribute('data-ff-mute-checked', '');
       const name = actorName(root);
       if (name && userSet.has(name.toLowerCase())) {
@@ -114,8 +144,21 @@
         tagged++;
       }
     }
+    // A container is muted only if every inner unit is muted; re-evaluated
+    // on each run because inner units can arrive later (lazy comments).
+    for (const c of containers) {
+      const inner = c.querySelectorAll(ROOT_SELECTORS);
+      const allMuted = [...inner].every((el) => el.hasAttribute('data-ff-muted'));
+      if (allMuted && !c.hasAttribute('data-ff-muted')) {
+        c.setAttribute('data-ff-muted', '');
+        tagged++;
+      } else if (!allMuted && c.hasAttribute('data-ff-muted')) {
+        c.removeAttribute('data-ff-muted');
+      }
+    }
     return tagged;
   }
+
 
   // --- Member-page collector ----------------------------------------------
 
@@ -188,10 +231,10 @@
 
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = 'Mute members on this page';
+      btn.textContent = 'Highlight or Mute members on this page';
       btn.addEventListener('click', async () => {
         const added = await addNames(pageMemberNames(), `group:${groupId}`);
-        info.textContent = `${added} added · ${userSet.size} muted in total`;
+        info.textContent = `${added} added · ${userSet.size}highlighted or muted in total`;
       });
 
       const armLabel = document.createElement('label');
@@ -201,7 +244,7 @@
         await setArmed(groupId, armBox.checked);
         if (armBox.checked) {
           const added = await addNames(pageMemberNames(), `group:${groupId}`);
-          info.textContent = `${added} added · ${userSet.size} muted in total — keep paging, each page is collected automatically`;
+          info.textContent = `${added} added · ${userSet.size} highlighted or muted in total — keep paging, each page is collected automatically`;
         }
       });
       armLabel.append(armBox, ' Auto-collect while paging');
@@ -213,11 +256,11 @@
       armBox.checked = armed;
       if (armed) {
         const added = await addNames(pageMemberNames(), `group:${groupId}`);
-        info.textContent = `${added} added · ${userSet.size} muted in total`;
+        info.textContent = `${added} added · ${userSet.size} highlighted or muted in total`;
       } else {
         const names = pageMemberNames();
         const known = [...names].filter((n) => userSet.has(n.toLowerCase())).length;
-        info.textContent = `${names.size} members on this page · ${known} already muted`;
+        info.textContent = `${names.size} members on this page · ${known} already highlighted or muted`;
       }
       collectorBusy = false;
     }
