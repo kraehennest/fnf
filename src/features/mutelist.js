@@ -51,34 +51,9 @@
     }
     rebuildSet();
     loaded = true;
-    await pinMuteMode();
     clearChecked();
     FF.run();
   }
-
-  /**
-   * Pin the mute mode on first run of 1.3+. Pre-1.3 users who never opened
-   * the popup after 1.2.0 have a list but no stored mute settings;
-   * normalize() would put them into the new highlight default and their
-   * list would seem to stop working. So: no stored mode + non-empty list =
-   * existing user -> hide; no stored mode + empty list = new user ->
-   * highlight. Storing it once keeps later list additions from flipping
-   * a new user into hide.
-   */
-  async function pinMuteMode() {
-    try {
-      const stored = await FF.api.storage.sync.get('settings');
-      const raw = stored && stored.settings;
-      if (raw && raw.mute && raw.mute.mode !== undefined) return;
-      const settings = FF.normalize(raw);
-      settings.mute.mode = userSet.size > 0 ? 'hide' : 'highlight';
-      FF.settings = settings;
-      await FF.api.storage.sync.set({ settings });
-    } catch (e) {
-      /* storage unavailable -> leave defaults */
-    }
-  }
-
 
   async function saveList() {
     await FF.api.storage.local.set({ [STORE_KEY]: { v: 1, users } });
@@ -159,7 +134,6 @@
     return tagged;
   }
 
-
   // --- Member-page collector ----------------------------------------------
 
   function memberPageGroupId() {
@@ -231,10 +205,10 @@
 
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = 'Highlight or Mute members on this page';
+      btn.textContent = 'Mute members on this page';
       btn.addEventListener('click', async () => {
         const added = await addNames(pageMemberNames(), `group:${groupId}`);
-        info.textContent = `${added} added · ${userSet.size}highlighted or muted in total`;
+        info.textContent = `${added} added · ${userSet.size} muted in total`;
       });
 
       const armLabel = document.createElement('label');
@@ -244,7 +218,7 @@
         await setArmed(groupId, armBox.checked);
         if (armBox.checked) {
           const added = await addNames(pageMemberNames(), `group:${groupId}`);
-          info.textContent = `${added} added · ${userSet.size} highlighted or muted in total — keep paging, each page is collected automatically`;
+          info.textContent = `${added} added · ${userSet.size} muted in total — keep paging, each page is collected automatically`;
         }
       });
       armLabel.append(armBox, ' Auto-collect while paging');
@@ -256,11 +230,11 @@
       armBox.checked = armed;
       if (armed) {
         const added = await addNames(pageMemberNames(), `group:${groupId}`);
-        info.textContent = `${added} added · ${userSet.size} highlighted or muted in total`;
+        info.textContent = `${added} added · ${userSet.size} muted in total`;
       } else {
         const names = pageMemberNames();
         const known = [...names].filter((n) => userSet.has(n.toLowerCase())).length;
-        info.textContent = `${names.size} members on this page · ${known} already highlighted or muted`;
+        info.textContent = `${names.size} members on this page · ${known} already muted`;
       }
       collectorBusy = false;
     }
@@ -281,11 +255,9 @@
     },
 
     apply(html, settings) {
-      const mute = settings.mute || {};
-      html.toggleAttribute('data-ff-mute-enabled', !!mute.enabled);
-      html.setAttribute(
-        'data-ff-mute-mode',
-        mute.mode === 'hide' ? 'hide' : 'highlight'
+      html.toggleAttribute(
+        'data-ff-mute-enabled',
+        !!(settings.mute && settings.mute.enabled)
       );
     },
   });

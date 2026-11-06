@@ -25,18 +25,14 @@ nothing but your settings and your own mute list (locally).
   self-identified gender label is "M", shown as a count line instead.
 - **Alert badges** — hide the red counters on the top-bar icons (inbox,
   message requests, notifications), each individually toggleable.
-- **Mute list** — keep a personal list of people and decide how their
-  content appears everywhere on the site (comments, message requests,
-  notifications, feed entries): **highlighted** (default — marked with a
-  red outline so you can judge requests and comments at a glance) or
-  **hidden** entirely. Add people one page at a time from a group's
-  member pages (a collector bar appears there; "auto-collect while
-  paging" harvests each page you open yourself), or import a plain-text
-  list. Export, import and clear from the popup. No cap on list size.
-  **Limits, honestly:** muting is not blocking — it changes what *you*
-  see, not what others see; only FetLife's own block feature does that.
-  And the collector only works where member lists are visible — private
-  groups don't expose theirs, so their members can't be collected.
+- **Mute list** — hide content from specific people everywhere on the
+  site: their comments, message requests, notifications and feed entries.
+  Add people one page at a time from a group's member pages (a collector
+  bar appears there; "auto-collect while paging" harvests each page you
+  open yourself), or import a plain-text list. Export, import and clear
+  from the popup. No cap on list size. **Muting is not blocking:** it
+  hides content in *your* browser; only FetLife's own block feature
+  affects what the other account can see.
 - Global on/off switch. Settings sync across your own browser profile via
   `storage.sync`; the mute list lives in `storage.local` on the device
   (use export/import to move it). Endless scrolling keeps working with

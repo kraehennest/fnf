@@ -49,13 +49,11 @@
       <li><label><input type="checkbox" id="hideMaleRequests" /> Hide requests from men (M)</label></li>
     </ul>
 
-    <h2>Highlight / Mute list</h2>
-    <ul role="radiogroup" aria-label="Muted people">
-      <li><label><input type="radio" name="muteMode" value="highlight" /> Highlight people</label></li>
-      <li><label><input type="radio" name="muteMode" value="hide" /> Mute people</label></li>
-      <li><label><input type="radio" name="muteMode" value="off" /> Off</label></li>
+    <h2>Mute list</h2>
+    <ul>
+      <li><label><input type="checkbox" id="muteEnabled" /> Hide content from muted people</label></li>
     </ul>
-    <p class="hint"><span id="muteCount">0</span> people highlighted / muted. Add people from a group's member pages.</p>
+    <p class="hint"><span id="muteCount">0</span> people muted. Add people from a group's member pages.</p>
     <div class="mute-actions">
       <button type="button" id="muteExport">Export</button>
       <button type="button" id="muteImport">Import</button>
