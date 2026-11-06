@@ -122,7 +122,4 @@ Misclassified something? Please
 [open an issue](https://github.com/kraehennest/fnf/issues) and include the
 element's outerHTML if you can.
 
-## Credits
-
-Built by [@kraehe](https://fetlife.com/kraehe). MIT licensed — see
-[LICENSE](LICENSE). Privacy policy: [PRIVACY.md](PRIVACY.md).
+MIT licensed — see [LICENSE](LICENSE). Privacy policy: [PRIVACY.md](PRIVACY.md).
